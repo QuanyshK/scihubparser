@@ -36,10 +36,6 @@ android {
 
 dependencies {
     implementation("org.jsoup:jsoup:1.19.1")
-    implementation(libs.retrofit)
-    implementation(libs.gson.converter)
-    implementation(libs.okhttp)
-    implementation(libs.logging)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -57,10 +53,10 @@ afterEvaluate {
 
                 groupId = "com.github.quanyshk"
                 artifactId = "scihubparser"
-                version = "1.0.0"
+                version = "1.1.0"
 
                 pom {
-                    url.set("https://github.com/QuanyshK/")
+                    url.set("https://github.com/QuanyshK/scihubparser")
                 }
             }
         }
@@ -68,10 +64,10 @@ afterEvaluate {
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/QuanyshK/ChatEchoLib")
+                url = uri("https://maven.pkg.github.com/QuanyshK/scihubparser")
                 credentials {
-                    username = System.getenv("gpr.user")
-                    password = System.getenv("gpr_key")
+                    username = project.findProperty("GITHUB_USER") as String
+                    password = project.findProperty("GITHUB_PASSWORD") as String
                 }
             }
         }

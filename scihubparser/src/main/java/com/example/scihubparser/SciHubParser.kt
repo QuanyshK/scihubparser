@@ -23,29 +23,29 @@ class SciHubParser {
             for (domain in sciHubDomains) {
                 val fullUrl = "$domain/$doi"
                 try {
-                    println("🔍 Connecting to: $fullUrl")
                     val doc = Jsoup.connect(fullUrl)
+                        .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36")
                         .timeout(10_000)
                         .get()
 
+                    if (doc.title().contains("DDoS-Guard", ignoreCase = true)) {
+                        kotlinx.coroutines.delay(3000)
+                        continue
+                    }
+
                     val embed = doc.selectFirst("embed[type=application/pdf]")
                     val src = embed?.attr("src")
-                    val pdfUrl = src?.let {
-                        if (it.startsWith("//")) "https:$it" else it
-                    }
+                    val fixedPdfUrl = src?.let { it }
 
                     val title = doc.selectFirst("#citation i")?.text()
 
-                    if (!pdfUrl.isNullOrEmpty()) {
-                        println("✅ Found PDF URL: $pdfUrl")
-                        return@withContext Result(pdfUrl, title)
+                    if (!fixedPdfUrl.isNullOrEmpty()) {
+                        return@withContext Result(fixedPdfUrl, title)
                     }
                 } catch (e: Exception) {
-                    println("❌ Error connecting to $fullUrl: ${e.message}")
                     continue
                 }
             }
-            println("🚫 PDF not found on all domains.")
             null
         }
     }
